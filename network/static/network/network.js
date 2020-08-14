@@ -40,6 +40,15 @@ function show_posts(post_filter) {
                 post_entry.appendChild(document.createTextNode(post.entry));
                 post_entry.classList.add('entry');
           
+                let post_like = document.createElement('div');
+                post_like.appendChild(document.createTextNode("Likes " + post.like));
+                post_like.classList.add('like');
+
+                let post_ulike = document.createElement('div');
+                if (post.user_like) {
+                    post_ulike.appendChild(document.createTextNode("I like "));
+                    post_ulike.classList.add('ulike');
+                }
                 let post_timestamp = document.createElement('div');
                 post_timestamp.appendChild(document.createTextNode(post.timestamp));
                 post_timestamp.classList.add('timestamp');
@@ -48,6 +57,8 @@ function show_posts(post_filter) {
           
                 display_posts.appendChild(post_owner);
                 display_posts.appendChild(post_entry);
+                display_posts.appendChild(post_like);
+                display_posts.appendChild(post_ulike);
                 display_posts.appendChild(post_timestamp);
                 postlist.appendChild(display_posts);
               }
