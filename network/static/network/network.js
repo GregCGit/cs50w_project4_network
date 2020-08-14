@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM handler");
     document.querySelector('#new_post').addEventListener('click', new_post);
+    //document.querySelector('#display-user').addEventListener('click', function() {
+    //    show_posts(document.querySelector('#display-user-id').innerText)
+    //});
 
     // By default, load the all posts
     show_posts('all');
@@ -9,10 +11,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function show_posts(post_filter) {
     // As we add views, add functionality here to hide / block
-    document.querySelector('#new_entry').value = '';
+    console.log("Made it to show_posts ", post_filter)
+    if (post_filter == 'all') {
+        document.querySelector('#post-view').style.display = 'block';
+        document.querySelector('#new_entry').value = '';
+    }
+    else {
+        document.querySelector('#post-view').style.display = 'none';
+    }
+
     // Get the list of posts
     console.log("Filter", post_filter)
-    document.querySelector('#list-view').innerHTML = `<h3>${post_filter.charAt(0).toUpperCase() + post_filter.slice(1)}</h3>`;
+    
     fetch('/get_posts/' + post_filter)
     .then(response => response.json())
     .then(posts => {
@@ -22,19 +32,27 @@ function show_posts(post_filter) {
             alert(posts.error)
         }
         else {
+            if (post_filter == "all") {
+                list_h3 = "All"
+            }
+            else {
+                list_h3 = document.querySelector('#display-user').innerText
+            }
+            document.querySelector('#list-view').innerHTML = `<h3>${list_h3}</h3>`;
             let postlist = document.querySelector('#list-view');
             posts.forEach(build_list);
 
             function build_list(post) {
-                console.log("Build List", post);
-                // Build each row - most properties are set at the end
+                //console.log("Build List", post);
+                // Build each row - post
                 let display_posts = document.createElement('div');
                 display_posts.classList.add("posting");
           
-                // Next build the three elements
-                let post_owner = document.createElement('div');
+                // Next build the elements
+                let post_owner = document.createElement('a');
                 post_owner.appendChild(document.createTextNode(post.user));
                 post_owner.classList.add('owner');
+                post_owner.href = "profile/" + post.user_id
           
                 let post_entry = document.createElement('div');
                 post_entry.appendChild(document.createTextNode(post.entry));
@@ -45,16 +63,16 @@ function show_posts(post_filter) {
                 post_like.classList.add('like');
 
                 let post_ulike = document.createElement('div');
+                // TBD the like / unlike button should go here
                 if (post.user_like) {
                     post_ulike.appendChild(document.createTextNode("I like "));
                     post_ulike.classList.add('ulike');
                 }
+
                 let post_timestamp = document.createElement('div');
                 post_timestamp.appendChild(document.createTextNode(post.timestamp));
                 post_timestamp.classList.add('timestamp');
-          
-                // TBD Need to handle likes
-          
+                    
                 display_posts.appendChild(post_owner);
                 display_posts.appendChild(post_entry);
                 display_posts.appendChild(post_like);

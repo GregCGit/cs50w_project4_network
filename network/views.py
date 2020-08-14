@@ -112,34 +112,41 @@ def count_likes(post_id, user_id):
     return like_dict
 
 def get_posts(request, post_filter):
-    #print("User name here", user)
-    #print("User name here", user.id)
     print("User name here", request.user.id)
 
     print("Filter", post_filter)
 
     if post_filter == 'all':
         posts = Post.objects.all()
-    
+    else:
+        # Assume that we are passed a user
+        posts = Post.objects.filter(user_id=post_filter)
+        print(posts)
+
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
     posts = posts.order_by("-timestamp").all()
     for post in posts:
-        print("Post-ie", post)
         like_dict = count_likes(post.id, request.user.id)
-        fullpostlist.append( {
+        fullpostlist.append({
             "id": post.id,
             "user": post.user.username,
+            "user_id": post.user_id,
             "entry": post.entry,
             "timestamp": post.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
             "like":  like_dict['num_like'],
             "user_like": like_dict['user_like']
         })
 
-    # Determine if the current user liked the post
-    # Probably need to rewrite serialize
-    #fullpostlist = json.dumps(fullpostlist)
     print("Posts", fullpostlist)
     return JsonResponse(fullpostlist, safe=False)
-    #return JsonResponse([post.serialize() for post in posts], safe=False)
     #return JsonResponse({"message": "Sure, we got here."}, status=201)
+
+def profile(request, user_id):
+    print("Inside of profile", user_id)
+    fullpostlist = get_posts(request, user_id)
+    #return render(request, "network/profile.html")
+    return render(request, "network/profile.html", {
+        "user_id": user_id,
+        "fullpostlist": fullpostlist
+    })

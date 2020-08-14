@@ -20,3 +20,7 @@ body {
     color: darkgray;
 
 }
+
+#display-user {
+    font-weight: bold;
+}
