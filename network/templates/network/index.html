@@ -1,5 +1,21 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+    {% if user.is_authenticated %}
+        <div id="post-view:>
+            <h3>New Post</h3>
+            <form id="post-form">
+                {% csrf_token %}
+                <textarea class="form-control" id="new_entry" placeholder="Your thoughts..." required></textarea>
+                <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
+            </form>
+        </div>
+    {% endif %}
+
+    <div id="list-view">Listing</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

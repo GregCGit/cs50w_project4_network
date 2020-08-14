@@ -5,7 +5,6 @@ LONG = 256
 
 
 class User(AbstractUser):
-    pass
 
     def __str__(self):
         return f"{self.username}"
@@ -13,10 +12,18 @@ class User(AbstractUser):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     entry = models.CharField(max_length=LONG, default="No description")
-    date_created = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user}: {self.entry} on {self.date_created}"
+        return f"{self.user}: {self.entry} on {self.timestamp}"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.username,
+            "entry": self.entry,
+            "timestamp": self.timestamp.strftime("%b %-d %Y, %-I:%M %p")
+        }
 
 
 class Like(models.Model):
