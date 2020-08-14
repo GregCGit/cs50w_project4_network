@@ -94,6 +94,10 @@ def get_posts(request, post_filter):
 
     if post_filter == 'all':
         posts = Post.objects.all()
+    
+    # Figure out likes - first, count up the number of likes per post
+    # Determine if the current user liked the post
+
     posts = posts.order_by("-timestamp").all()
     print("Posts", posts)
     return JsonResponse([post.serialize() for post in posts], safe=False)

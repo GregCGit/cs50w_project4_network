@@ -1,0 +1,22 @@
+body {
+    margin: 5px;
+}
+
+.posting {
+    border: solid 1px darkgray;
+}
+
+/* Stub if we decide to add CSS
+.entry {
+
+}
+*/
+
+.owner {
+    font-weight: bold;
+}
+
+.timestamp {
+    color: darkgray;
+
+}

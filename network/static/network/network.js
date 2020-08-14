@@ -9,13 +9,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function show_posts(post_filter) {
     // As we add views, add functionality here to hide / block
+    document.querySelector('#new_entry').value = '';
     // Get the list of posts
     console.log("Filter", post_filter)
+    document.querySelector('#list-view').innerHTML = `<h3>${post_filter.charAt(0).toUpperCase() + post_filter.slice(1)}</h3>`;
     fetch('/get_posts/' + post_filter)
     .then(response => response.json())
     .then(posts => {
         // Print posts
         console.log(posts);
+        if (posts.error) {
+            alert(posts.error)
+        }
+        else {
+            let postlist = document.querySelector('#list-view');
+            posts.forEach(build_list);
+
+            function build_list(post) {
+                console.log("Build List", post);
+                // Build each row - most properties are set at the end
+                let display_posts = document.createElement('div');
+                display_posts.classList.add("posting");
+          
+                // Next build the three elements
+                let post_owner = document.createElement('div');
+                post_owner.appendChild(document.createTextNode(post.user));
+                post_owner.classList.add('owner');
+          
+                let post_entry = document.createElement('div');
+                post_entry.appendChild(document.createTextNode(post.entry));
+                post_entry.classList.add('entry');
+          
+                let post_timestamp = document.createElement('div');
+                post_timestamp.appendChild(document.createTextNode(post.timestamp));
+                post_timestamp.classList.add('timestamp');
+          
+                // TBD Need to handle likes
+          
+                display_posts.appendChild(post_owner);
+                display_posts.appendChild(post_entry);
+                display_posts.appendChild(post_timestamp);
+                postlist.appendChild(display_posts);
+              }
+        }
     });
 }
 
@@ -30,12 +66,13 @@ function new_post() {
         })
     })
     .then(response => response.json())
-    .then(result => {
+    .then(results => {
         // Print result
-        console.log(result);
-        if (result.error) {
-          alert(result.error)
+        console.log(results);
+        if (results.error) {
+          alert(results.error)
         }
+        show_posts('all');
     });
     
   }
