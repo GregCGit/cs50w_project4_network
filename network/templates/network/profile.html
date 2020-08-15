@@ -12,8 +12,11 @@
         </form>
     </div>
     <div id="follow-view">
-        <h3>Following {{ following }}</h3>
-        <h3>Followed by {{ followed_by }}</h3>
+        <div class="follow">Following {{ following }}</div>
+        <div class="follow">Followed by {{ followed_by }}</div>
+        {% if am_following %}
+            <div>I am following</div>
+        {% endif %}
     </div>
     <div id="list-view"></div>
 {% endblock %}

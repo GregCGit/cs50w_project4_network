@@ -143,26 +143,11 @@ def get_posts(request, post_filter):
     #return JsonResponse({"message": "Sure, we got here."}, status=201)
 
 
-def get_following_count(user_id):
-    try:
-        return Follow.objects.filter(user_id=user_id).count()
-    except User.DoesNotExist:
-        return 0
-
-
-def get_followed_count(user_id):
-    try:
-        return Follow.objects.filter(following=user_id).count()
-    except User.DoesNotExist:
-        return 0
-
-
 def profile(request, user_id):
     print("Inside of JS profile", user_id)
-    following = get_following_count(user_id)
-    followed_by = get_followed_count(user_id)
     return render(request, "network/profile.html", {
         "req_user_id": user_id,
-        "following": following,
-        "followed_by": followed_by
+        "following": Follow.objects.filter(user_id=user_id).count(),
+        "followed_by": Follow.objects.filter(following=user_id).count(),
+        "am_following": Follow.objects.filter(user_id=request.user.id, following=user_id).count()
     })

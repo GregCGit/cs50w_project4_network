@@ -21,6 +21,10 @@ body {
 
 }
 
+.follow {
+    font-weight: 500;
+}
+
 #display-user {
     font-weight: bold;
 }
