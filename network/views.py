@@ -133,7 +133,14 @@ def get_posts(request):
     if post_filter == 'all':
         posts = Post.objects.all()
     else:
+        if data['following_page']:
+            try:
+                post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
+                print("Inside following", post_filter)
+            except ObjectDoesNotExist:
+                return JsonResponse({"message": "Following no one."}, status=201)
         # Assume that we are passed a user
+        print(" --- post filter", post_filter)
         posts = Post.objects.filter(user_id__in=post_filter)
     
     print("All of the posts", posts)
@@ -172,6 +179,18 @@ def profile(request, user_id):
         "am_following": am_following
     })
 
+
+def following(request, user_id):
+    return render(request, "network/following.html", {
+        "req_user_id": user_id,
+        "req_username": User.objects.get(id=user_id).username,
+        "following": 0,
+        "followed_by": 0,
+        "am_following": False,
+        "following_page": 1,
+    })
+
+"""
 def following(request, user_id):
     # First, find out who we are following
     try:
@@ -187,3 +206,4 @@ def following(request, user_id):
 
     # Figure out where to return it to
     return JsonResponse({"message": "Sure, we got here."}, status=201)
+"""

@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     relative_path = relative_path.slice(0,-1)
     console.log("R path", relative_path);
     console.log("auth", is_authenticated)
+    console.log("fpage", following_page)
     show_posts(req_user_id);
     if (follow_needed) {
         // TBD - not needed, probably remove
@@ -49,16 +50,23 @@ function show_posts(post_filter) {
     console.log("Made it to show_posts ", post_filter)
     document.querySelector('#follow-view').style.display = 'none';
     document.querySelector('#post-view').style.display = 'none';
-    if (post_filter == 'all' && is_authenticated == "True" ) {
-        document.querySelector('#post-view').style.display = 'block';
-        document.querySelector('#new_entry').value = '';
+
+    if (post_filter == 'all') {
+        document.querySelector('#body-title').innerHTML = 'All Posts';
+        if (is_authenticated == "True") {
+            document.querySelector('#post-view').style.display = 'block';
+            document.querySelector('#new_entry').value = '';
+        }
     }
-    else if (post_filter == 'all') {
-        console.log("All not logged in")
+    else if (following_page) {
+        document.querySelector('#body-title').innerHTML = 'Following';
     }
     else {
+        // Profile page
         document.querySelector('#follow-view').style.display = 'block';
+        document.querySelector('#body-title').innerText = 'Profile ' + req_username;
     }
+
 
     // Get the list of posts
     console.log("Filter", post_filter)
@@ -66,7 +74,8 @@ function show_posts(post_filter) {
     fetch('/get_posts', {
         method: 'PUT',
         body: JSON.stringify({
-            post_filter: post_filter
+            post_filter: post_filter,
+            following_page: following_page
         })
     })
     .then(response => response.json())
@@ -83,7 +92,7 @@ function show_posts(post_filter) {
             else {
                 list_h3 = "";
             }
-            document.querySelector('#list-view').innerHTML = `<h3>${list_h3}</h3>`;
+            //document.querySelector('#list-view').innerHTML = `<h3>${list_h3}</h3>`;
             let postlist = document.querySelector('#list-view');
             posts.forEach(build_list);
 
