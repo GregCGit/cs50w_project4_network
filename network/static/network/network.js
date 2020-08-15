@@ -63,8 +63,11 @@ function show_posts(post_filter) {
     // Get the list of posts
     console.log("Filter", post_filter)
     
-    fetch('/get_posts/' + post_filter, {
-        method: 'PUT'
+    fetch('/get_posts', {
+        method: 'PUT',
+        body: JSON.stringify({
+            post_filter: post_filter
+        })
     })
     .then(response => response.json())
     .then(posts => {

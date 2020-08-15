@@ -89,6 +89,7 @@ def new_post(request):
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
+
 def count_likes(post_id, user_id):
     like_dict = {
         'num_like': 0,
@@ -124,9 +125,9 @@ def change_follow(request):
 
 
 @csrf_exempt
-def get_posts(request, post_filter):
-    print("User name here", request.user.id)
-
+def get_posts(request):
+    data = json.loads(request.body)
+    post_filter = data['post_filter']
     print("Filter", post_filter)
 
     if post_filter == 'all':
@@ -134,7 +135,9 @@ def get_posts(request, post_filter):
     else:
         # Assume that we are passed a user
         posts = Post.objects.filter(user_id=post_filter)
-        #print(posts)
+    
+    print("All of the posts", posts)
+    #    return JsonResponse({"message": "Sure, we got here."}, status=201)
 
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
