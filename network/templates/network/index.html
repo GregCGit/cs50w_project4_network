@@ -1,29 +1,6 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block body %}
-    <div id="post-view">
-        <h3>New Post</h3>
-        <form id="post-form">
-            {% csrf_token %}
-            <textarea class="form-control" id="new_entry" placeholder="Your thoughts..." required></textarea>
-            <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
-        </form>
-    </div>
-
-    <div id="follow-view">
-        <div class="follow">Following {{ following }}</div>
-        <div class="follow">Followed by {{ followed_by }}</div>
-        {% if user.is_authenticated %}
-            <form id="follow-form">
-                <input type="submit" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
-            </form>
-        {% endif %}
-    </div>
-
-    <div id="list-view"></div>
-{% endblock %}
-
 {% block script %}
     <script type="text/javascript">
         var req_user_id = "all";
