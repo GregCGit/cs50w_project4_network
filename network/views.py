@@ -97,20 +97,33 @@ def count_likes(post_id, user_id):
     try:
         # First, lets get the count
         like_dict['num_like'] = Like.objects.filter(post_id=post_id).count()
-        print("Likes", post_id, like_dict['num_like'])
+        #print("Likes", post_id, like_dict['num_like'])
         # And then check to see if the user liked it
         try:
             like_dict['user_like'] = Like.objects.filter(post_id=post_id, user_id=user_id).count()
         except ObjectDoesNotExist:
             pass
-        #comment_post = []
-        #for item in comment_pre:
-        #    temp = [User.objects.only('username').get(id=item.user_id).username, item.comment]
-        #    comment_post.append(temp)
     except ObjectDoesNotExist:
         pass
     return like_dict
 
+
+@csrf_exempt
+def change_follow(request):
+    data = json.loads(request.body)
+    try:
+        follow_entry = Follow.objects.get(user_id=data['cur_user_id'], following_id=data['req_user_id'])
+        follow_entry.delete()
+    except Follow.DoesNotExist:
+        follow_entry = Follow(
+            user_id=data['cur_user_id'],
+            following_id=data['req_user_id']
+        )
+        follow_entry.save()
+    return HttpResponse(status=204)
+
+
+@csrf_exempt
 def get_posts(request, post_filter):
     print("User name here", request.user.id)
 
@@ -121,7 +134,7 @@ def get_posts(request, post_filter):
     else:
         # Assume that we are passed a user
         posts = Post.objects.filter(user_id=post_filter)
-        print(posts)
+        #print(posts)
 
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
@@ -138,7 +151,7 @@ def get_posts(request, post_filter):
             "user_like": like_dict['user_like']
         })
 
-    print("Posts", fullpostlist)
+    #print("Posts", fullpostlist)
     return JsonResponse(fullpostlist, safe=False)
     #return JsonResponse({"message": "Sure, we got here."}, status=201)
 

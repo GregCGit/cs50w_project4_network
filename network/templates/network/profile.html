@@ -16,7 +16,7 @@
         <div class="follow">Followed by {{ followed_by }}</div>
         {% if user.is_authenticated %}
             <form id="follow-form">
-                <input type="submit" class="btn btn-primary" id="new_post" value="{{ am_following }}"/>
+                <input type="submit" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
             </form>
         {% endif %}
     </div>
@@ -30,6 +30,7 @@
         var relative_path = "{% url 'profile' 1 %}";
         var is_authenticated = "{{ user.is_authenticated }}";
         var follow_needed = 1;
+        var am_following = "{{ am_following }}";
     </script> 
     <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

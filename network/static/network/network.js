@@ -1,35 +1,64 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#new_post').addEventListener('click', new_post);
-    //document.querySelector('#display-user').addEventListener('click', function() {
-    //    show_posts(document.querySelector('#display-user-id').innerText)
-    //});
-
+    
     // By default, load the all posts
     relative_path = relative_path.slice(0,-1)
     console.log("R path", relative_path);
     console.log("auth", is_authenticated)
     show_posts(req_user_id);
     if (follow_needed) {
+        // TBD - not needed, probably remove
         show_follow(req_user_id)
     }
-
+    if (is_authenticated == "True") {
+        document.querySelector('#change_follow').addEventListener('click', change_follow);
+    }
 });
+
+
+function change_follow(am_following) {
+    /* No need to update as the page is reloaded on click
+    if (am_following == "Follow") {
+        am_following = "Unfollow";
+    }
+    else {
+        am_following = "Follow";
+    }
+    temp = document.querySelector('#change_follow')
+    temp.value = am_following;
+    */
+    fetch('/change_follow', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            cur_user_id: cur_user_id,
+            req_user_id: req_user_id
+        })
+    })
+}
 
 function show_posts(post_filter) {
     // As we add views, add functionality here to hide / block
     console.log("Made it to show_posts ", post_filter)
+    document.querySelector('#follow-view').style.display = 'none';
+    document.querySelector('#post-view').style.display = 'none';
     if (post_filter == 'all' && is_authenticated == "True" ) {
         document.querySelector('#post-view').style.display = 'block';
         document.querySelector('#new_entry').value = '';
     }
+    else if (post_filter == 'all') {
+        console.log("All not logged in")
+    }
     else {
-        document.querySelector('#post-view').style.display = 'none';
+        document.querySelector('#follow-view').style.display = 'block';
     }
 
     // Get the list of posts
     console.log("Filter", post_filter)
     
-    fetch('/get_posts/' + post_filter)
+    fetch('/get_posts/' + post_filter, {
+        method: 'PUT'
+    })
     .then(response => response.json())
     .then(posts => {
         // Print posts
@@ -93,6 +122,7 @@ function show_posts(post_filter) {
 }
 
 function show_follow(req_user_id) {
+    // TBD - not needed, probably remove
     console.log("Calling show_follow", req_user_id)
 }
 
@@ -113,7 +143,7 @@ function new_post() {
         if (results.error) {
           alert(results.error)
         }
-        show_posts('all');
+        //show_posts('all');
     });
     
   }
