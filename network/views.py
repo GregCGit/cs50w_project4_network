@@ -144,9 +144,8 @@ def get_posts(request, post_filter):
 
 def profile(request, user_id):
     print("Inside of profile", user_id)
-    fullpostlist = get_posts(request, user_id)
+    #fullpostlist = get_posts(request, user_id)
     #return render(request, "network/profile.html")
     return render(request, "network/profile.html", {
-        "user_id": user_id,
-        "fullpostlist": fullpostlist
+        "req_user_id": user_id
     })

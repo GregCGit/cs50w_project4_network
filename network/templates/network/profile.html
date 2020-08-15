@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-    
+    <h2>Profile page</h2>
     <div id="post-view">
         <h3>New Post</h3>
         <form id="post-form">
@@ -17,11 +17,10 @@
 
 {% block script %}
     <script type="text/javascript">
-        var req_user_id = "all";
+        var req_user_id = "{{ req_user_id }}";
         var cur_user_id = "{{ user.id }}";
         var relative_path = "{% url 'profile' 1 %}";
         var is_authenticated = "{{ user.is_authenticated }}";
     </script> 
-
     <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

@@ -5,14 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
     //});
 
     // By default, load the all posts
-    show_posts('all');
+    relative_path = relative_path.slice(0,-1)
+    console.log("R path", relative_path);
+    console.log("auth", is_authenticated)
+    show_posts(req_user_id);
 
 });
 
 function show_posts(post_filter) {
     // As we add views, add functionality here to hide / block
     console.log("Made it to show_posts ", post_filter)
-    if (post_filter == 'all') {
+    if (post_filter == 'all' && is_authenticated == "True" ) {
         document.querySelector('#post-view').style.display = 'block';
         document.querySelector('#new_entry').value = '';
     }
@@ -36,7 +39,7 @@ function show_posts(post_filter) {
                 list_h3 = "All"
             }
             else {
-                list_h3 = document.querySelector('#display-user').innerText
+                list_h3 = "";
             }
             document.querySelector('#list-view').innerHTML = `<h3>${list_h3}</h3>`;
             let postlist = document.querySelector('#list-view');
@@ -52,7 +55,9 @@ function show_posts(post_filter) {
                 let post_owner = document.createElement('a');
                 post_owner.appendChild(document.createTextNode(post.user));
                 post_owner.classList.add('owner');
-                post_owner.href = "profile/" + post.user_id
+                //post_owner.href = "profile/" + post.user_id
+                post_owner.href = relative_path + post.user_id
+                
           
                 let post_entry = document.createElement('div');
                 post_entry.appendChild(document.createTextNode(post.entry));
