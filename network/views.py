@@ -134,7 +134,7 @@ def get_posts(request):
         posts = Post.objects.all()
     else:
         # Assume that we are passed a user
-        posts = Post.objects.filter(user_id=post_filter)
+        posts = Post.objects.filter(user_id__in=post_filter)
     
     print("All of the posts", posts)
     #    return JsonResponse({"message": "Sure, we got here."}, status=201)
@@ -166,6 +166,7 @@ def profile(request, user_id):
         am_following = "Unfollow"
     return render(request, "network/profile.html", {
         "req_user_id": user_id,
+        "req_username": User.objects.get(id=user_id).username,
         "following": Follow.objects.filter(user_id=user_id).count(),
         "followed_by": Follow.objects.filter(following=user_id).count(),
         "am_following": am_following
