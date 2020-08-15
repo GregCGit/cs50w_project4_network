@@ -16,17 +16,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function change_follow(am_following) {
+function change_follow() {
     /* No need to update as the page is reloaded on click
+    am_following = document.querySelector('#change_follow').value
+    console.log("Inside JS change_follow", am_following, "EOL");
     if (am_following == "Follow") {
         am_following = "Unfollow";
+        console.log("  Upper", am_following);
     }
     else {
         am_following = "Follow";
+        console.log("  Lower", am_following);
+
     }
-    temp = document.querySelector('#change_follow')
-    temp.value = am_following;
+    var temp = document.querySelector('#change_follow')
+    temp.setAttribute("value", am_following);
+    console.log("  Yup", temp.value)
     */
+
     fetch('/change_follow', {
         method: 'POST',
         credentials: 'same-origin',
