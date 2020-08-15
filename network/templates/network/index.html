@@ -21,6 +21,7 @@
         var cur_user_id = "{{ user.id }}";
         var relative_path = "{% url 'profile' 1 %}";
         var is_authenticated = "{{ user.is_authenticated }}";
+        var follow_needed = 0;
     </script> 
 
     <script src="{% static 'network/network.js' %}"></script>

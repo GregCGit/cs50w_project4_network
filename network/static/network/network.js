@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("R path", relative_path);
     console.log("auth", is_authenticated)
     show_posts(req_user_id);
+    if (follow_needed) {
+        show_follow(req_user_id)
+    }
 
 });
 
@@ -87,6 +90,10 @@ function show_posts(post_filter) {
               }
         }
     });
+}
+
+function show_follow(req_user_id) {
+    console.log("Calling show_follow", req_user_id)
 }
 
 function new_post() {

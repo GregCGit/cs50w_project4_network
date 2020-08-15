@@ -11,7 +11,10 @@
             <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
         </form>
     </div>
-
+    <div id="follow-view">
+        <h3>Following {{ following }}</h3>
+        <h3>Followed by {{ followed_by }}</h3>
+    </div>
     <div id="list-view"></div>
 {% endblock %}
 
@@ -21,6 +24,7 @@
         var cur_user_id = "{{ user.id }}";
         var relative_path = "{% url 'profile' 1 %}";
         var is_authenticated = "{{ user.is_authenticated }}";
+        var follow_needed = 1;
     </script> 
     <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}
