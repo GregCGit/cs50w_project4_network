@@ -14,8 +14,10 @@
     <div id="follow-view">
         <div class="follow">Following {{ following }}</div>
         <div class="follow">Followed by {{ followed_by }}</div>
-        {% if am_following %}
-            <div>I am following</div>
+        {% if user.is_authenticated %}
+            <form id="follow-form">
+                <input type="submit" class="btn btn-primary" id="new_post" value="{{ am_following }}"/>
+            </form>
         {% endif %}
     </div>
     <div id="list-view"></div>
