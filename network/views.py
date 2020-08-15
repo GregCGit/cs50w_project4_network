@@ -171,3 +171,19 @@ def profile(request, user_id):
         "followed_by": Follow.objects.filter(following=user_id).count(),
         "am_following": am_following
     })
+
+def following(request, user_id):
+    # First, find out who we are following
+    try:
+        follow_users = Follow.objects.filter(user_id=user_id).values_list('following', flat=True)
+        print("Inside following", follow_users)
+    except ObjectDoesNotExist:
+        return JsonResponse({"message": "Following no one."}, status=201)
+
+    # Next, find all of the posts for those people
+    follow_list = Post.objects.filter(user_id__in=follow_users).order_by("-timestamp")
+
+    print("- Whatever", follow_list)
+
+    # Figure out where to return it to
+    return JsonResponse({"message": "Sure, we got here."}, status=201)

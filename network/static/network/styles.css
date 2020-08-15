@@ -4,6 +4,7 @@ body {
 
 .posting {
     border: solid 1px darkgray;
+    padding: 4px;
 }
 
 /* Stub if we decide to add CSS
