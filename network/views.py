@@ -2,6 +2,7 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -12,7 +13,68 @@ from .models import Follow, Like, Post, User
 
 
 def index(request):
-    return render(request, "network/index.html")
+    post_filter = request.GET.get('user', 'all')
+    following_page = request.GET.get('flw', '0')
+    ptitle = ""
+    following = '0'
+    followed_by = '0'
+    am_following = 'Follow'
+    
+    if post_filter == 'all':
+        posts = Post.objects.all()
+        ptitle = 'All Posts'
+        print("Title A", ptitle)
+    else:
+        if following_page != '0':
+            try:
+                post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
+                print("Inside following", post_filter)
+                ptitle = 'Following'
+            except ObjectDoesNotExist:
+                pass
+        else:
+            # For the profile page, get follow, followed_by, and me_follow
+            ptitle = User.objects.get(id=post_filter)
+            print("Title B", ptitle)
+            following = Follow.objects.filter(user_id=post_filter).count()
+            followed_by = Follow.objects.filter(following=post_filter).count()
+            if Follow.objects.filter(user_id=request.user.id, following=post_filter).count():
+                am_following = "Unfollow"
+
+
+        # Assume that we are passed a user
+        posts = Post.objects.filter(user_id__in=post_filter)
+    
+    # Figure out likes - first, count up the number of likes per post
+    fullpostlist = []
+    posts = posts.order_by("-timestamp").all()
+    for post in posts:
+        like_dict = count_likes(post.id, request.user.id)
+        fullpostlist.append({
+            "id": post.id,
+            "user": post.user.username,
+            "user_id": post.user_id,
+            "entry": post.entry,
+            "timestamp": post.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
+            "like":  like_dict['num_like'],
+            "user_like": like_dict['user_like']
+        })
+
+    p = Paginator(fullpostlist, 3)
+    ppg = p.page(request.GET.get('page', '1'))
+
+    filter =  request.GET.get('user', 'all')
+    if filter != 'all':
+        filter = int(filter)
+    return render(request, 'network/index.html', {
+        'flw': following_page,
+        'ppg': ppg,
+        'filter': filter,
+        'ptitle': ptitle,
+        "following": following,
+        "followed_by": followed_by,
+        'am_following': am_following
+     })
 
 
 def login_view(request):
@@ -93,7 +155,7 @@ def new_post(request):
 def count_likes(post_id, user_id):
     like_dict = {
         'num_like': 0,
-        'user_like': 0
+        'user_like': 'Like'
         }
     try:
         # First, lets get the count
@@ -101,7 +163,8 @@ def count_likes(post_id, user_id):
         #print("Likes", post_id, like_dict['num_like'])
         # And then check to see if the user liked it
         try:
-            like_dict['user_like'] = Like.objects.filter(post_id=post_id, user_id=user_id).count()
+            Like.objects.get(post_id=post_id, user_id=user_id)
+            like_dict['user_like'] = 'Unlike'
         except ObjectDoesNotExist:
             pass
     except ObjectDoesNotExist:
@@ -125,7 +188,29 @@ def change_follow(request):
 
 
 @csrf_exempt
+def change_like(request):
+    #print("PY Change Like inside")
+    data = json.loads(request.body)
+    try:
+        #print("PY Change Like inside try")
+        like_entry = Like.objects.get(user_id=data['cur_user_id'], post_id=data['post_id'])
+        #print("PY Change Like inside try 2")
+        like_entry.delete()
+    except ObjectDoesNotExist:
+        #print("PY Change Like inside except")
+        like_entry = Like(
+            user_id=data['cur_user_id'],
+            post_id=data['post_id']
+        )
+        #print("PY Change Like save")
+        like_entry.save()
+    return HttpResponse(status=204)
+
+
+"""
+@csrf_exempt
 def get_posts(request):
+    ### We can probably retire this after the pagination rewrite
     data = json.loads(request.body)
     post_filter = data['post_filter']
     print("Filter", post_filter)
@@ -143,8 +228,8 @@ def get_posts(request):
         print(" --- post filter", post_filter)
         posts = Post.objects.filter(user_id__in=post_filter)
     
-    print("All of the posts", posts)
-    #    return JsonResponse({"message": "Sure, we got here."}, status=201)
+    #print("All of the posts", posts)
+    #return JsonResponse({"message": "Sure, we got here."}, status=201)
 
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
@@ -162,10 +247,15 @@ def get_posts(request):
         })
 
     #print("Posts", fullpostlist)
-    return JsonResponse(fullpostlist, safe=False)
+    p = Paginator(fullpostlist, 4)
+    print("---- Page", p.num_pages)
+    ppg = p.page(2)
+    return JsonResponse(ppg, safe=False)
+    #return render(request, 'network/index.html', { 'fullpostlist': ppg })
+    #return JsonResponse(fullpostlist, safe=False)
     #return JsonResponse({"message": "Sure, we got here."}, status=201)
-
-
+"""
+"""
 def profile(request, user_id):
     print("Inside of JS profile", user_id)
     am_following = "Follow"
@@ -178,9 +268,10 @@ def profile(request, user_id):
         "followed_by": Follow.objects.filter(following=user_id).count(),
         "am_following": am_following
     })
-
-
+"""
+"""
 def following(request, user_id):
+    ### We can probably retire this after the pagination rewrite
     return render(request, "network/following.html", {
         "req_user_id": user_id,
         "req_username": User.objects.get(id=user_id).username,
@@ -189,9 +280,10 @@ def following(request, user_id):
         "am_following": False,
         "following_page": 1,
     })
-
+"""
 """
 def following(request, user_id):
+    ### We can probably retire this after the pagination rewrite
     # First, find out who we are following
     try:
         follow_users = Follow.objects.filter(user_id=user_id).values_list('following', flat=True)
