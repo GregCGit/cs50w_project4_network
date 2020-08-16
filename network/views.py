@@ -13,12 +13,12 @@ from .models import Follow, Like, Post, User
 
 
 def index(request):
-    post_filter = 'all'
-
+    post_filter = request.GET.get('user', 'all')
+    print(" User ID ", post_filter)
     if post_filter == 'all':
         posts = Post.objects.all()
     else:
-        if data['following_page']:
+        if False:
             try:
                 post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
                 print("Inside following", post_filter)
@@ -45,7 +45,11 @@ def index(request):
 
     p = Paginator(fullpostlist, 3)
     ppg = p.page(request.GET.get('page', '1'))
-    return render(request, 'network/index.html', { 'ppg': ppg })
+    return render(request, 'network/index.html', { 
+        'ppg': ppg,
+        'user': request.GET.get('user', 'all')
+
+     })
 
 
 def login_view(request):
