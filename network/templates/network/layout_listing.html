@@ -40,17 +40,17 @@
                 {% else %}
                     <li class="page-item disabled">
                 {% endif %}
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
                 {% for i in ppg.paginator.page_range %}
                     {% if ppg.number == i %}
                         <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="http://google.com">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if ppg.has_next %}
-                    <li class="page-item"><a class="page-link" href="http://google.com">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ ppg.next_page_number }}">Next</a></li>
                 {% else %}
                     <li class="page-item disabled"><span class="page-link">Next</span></li>
                 {% endif %}
