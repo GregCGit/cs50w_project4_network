@@ -3,14 +3,18 @@
 
 {% block script %}
     <script type="text/javascript">
+        /*
         var req_user_id = "all";
         var cur_user_id = "{{ user.id }}";
         var req_username = 0;
-        var relative_path = "{% url 'profile' 1 %}";
-        var is_authenticated = "{{ user.is_authenticated }}";
         var follow_needed = 0;
         var am_following = "";
         var following_page = 0;
+        */
+        var cur_user_id = "{{ user.id }}";
+        var is_authenticated = "{{ user.is_authenticated }}";
+        var filter = "{{ filter }}";
+        var flw = "{{ flw }}";
     </script> 
 
     <script src="{% static 'network/network.js' %}"></script>

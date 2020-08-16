@@ -14,26 +14,33 @@
     </div>
     {% endif %}
 
-    {% if filter != 'all' %}
+    {% if filter != 'all' and flw != '1' %}
     <div id="follow-view">
         <div class="follow">Following {{ following }}</div>
         <div class="follow">Followed by {{ followed_by }}</div>
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and user.id != filter %}
             <form id="follow-form">
-                <input type="submit" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
+                <input type="button" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
             </form>
         {% endif %}
     </div>
     {% endif %}
-    <br>
+
     <div id="list-view">
         {% for pp in ppg %}
         <div class='posting'>
             <div class='owner'><a href="?user={{ pp.user_id }}">{{ pp.user }}</a></div>
-            <div>{{ pp.entry}}</div>
-            <div class='timestamp'>{{ pp.timestamp}}</div>
-            <div>Like {{ pp.like}}</div>
+            <div>{{ pp.entry }}</div>
+            <div class='timestamp'>{{ pp.timestamp }}</div>
+            <div>Like <span id="lkc{{ pp.id }}">{{ pp.like }}</span></div>
+            {% if user.is_authenticated %}
+                <form id="like-form">
+                    <input type="button" class="btn btn-outline-primary" id="clb{{ pp.id }}" onclick="javascript:change_like('{{ pp.id }}');" value="{{ pp.user_like }}"/>
+                </form>
+            {% endif %}
         </div>
+        {% empty %}
+        <h4>No posts found.</h4>
         {% endfor %}
         <br>
         <!-- Fancy Next / Previous buttons -->

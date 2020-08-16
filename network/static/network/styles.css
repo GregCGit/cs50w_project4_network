@@ -4,7 +4,7 @@ body {
 
 .posting {
     border: solid 1px darkgray;
-    padding: 4px;
+    padding: 2px;
 }
 
 /* Stub if we decide to add CSS
@@ -28,4 +28,8 @@ body {
 
 #display-user {
     font-weight: bold;
+}
+
+#list-view {
+    margin-top: 5px;
 }
