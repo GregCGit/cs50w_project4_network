@@ -21,5 +21,41 @@
         {% endif %}
     </div>
     <br>
-    <div id="list-view"></div>
+    <div id="list-view">
+        {% for pp in ppg %}
+        <div class='posting'>
+            <div class='owner'>{{ pp.user }}</div>
+            <div>{{ pp.entry}}</div>
+            <div class='timestamp'>{{ pp.timestamp}}</div>
+            <div>Like {{ pp.like}}</div>
+        </div>
+        {% endfor %}
+        <br>
+        <!-- Fancy Next / Previous buttons -->
+        {% if ppg.has_other_pages %}
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if ppg.has_previous %}
+                    <li class="page-item">
+                {% else %}
+                    <li class="page-item disabled">
+                {% endif %}
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                {% for i in ppg.paginator.page_range %}
+                    {% if ppg.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="http://google.com">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if ppg.has_next %}
+                    <li class="page-item"><a class="page-link" href="http://google.com">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+    </div>
 {% endblock %}

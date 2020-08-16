@@ -2,6 +2,7 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -12,6 +13,50 @@ from .models import Follow, Like, Post, User
 
 
 def index(request):
+    # data = json.loads(request.body)
+    post_filter = 'all'
+    print("Filter", post_filter)
+
+    if post_filter == 'all':
+        posts = Post.objects.all()
+    else:
+        if data['following_page']:
+            try:
+                post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
+                print("Inside following", post_filter)
+            except ObjectDoesNotExist:
+                return JsonResponse({"message": "Following no one."}, status=201)
+        # Assume that we are passed a user
+        print(" --- post filter", post_filter)
+        posts = Post.objects.filter(user_id__in=post_filter)
+    
+    print("All of the posts", posts)
+    
+
+    # Figure out likes - first, count up the number of likes per post
+    fullpostlist = []
+    posts = posts.order_by("-timestamp").all()
+    for post in posts:
+        like_dict = count_likes(post.id, request.user.id)
+        fullpostlist.append({
+            "id": post.id,
+            "user": post.user.username,
+            "user_id": post.user_id,
+            "entry": post.entry,
+            "timestamp": post.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
+            "like":  like_dict['num_like'],
+            "user_like": like_dict['user_like']
+        })
+
+    #print("Posts", fullpostlist)
+    p = Paginator(fullpostlist, 4)
+    print("---- Page", p.num_pages)
+    ppg = p.page(1)
+
+    #return JsonResponse(ppg, safe=False)
+    return render(request, 'network/index.html', { 'ppg': ppg })
+    #return JsonResponse(fullpostlist, safe=False)
+    #return JsonResponse({"message": "Sure, we got here."}, status=201)
     return render(request, "network/index.html")
 
 
@@ -143,8 +188,8 @@ def get_posts(request):
         print(" --- post filter", post_filter)
         posts = Post.objects.filter(user_id__in=post_filter)
     
-    print("All of the posts", posts)
-    #    return JsonResponse({"message": "Sure, we got here."}, status=201)
+    #print("All of the posts", posts)
+    #return JsonResponse({"message": "Sure, we got here."}, status=201)
 
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
@@ -162,7 +207,12 @@ def get_posts(request):
         })
 
     #print("Posts", fullpostlist)
-    return JsonResponse(fullpostlist, safe=False)
+    p = Paginator(fullpostlist, 4)
+    print("---- Page", p.num_pages)
+    ppg = p.page(2)
+    return JsonResponse(ppg, safe=False)
+    #return render(request, 'network/index.html', { 'fullpostlist': ppg })
+    #return JsonResponse(fullpostlist, safe=False)
     #return JsonResponse({"message": "Sure, we got here."}, status=201)
 
 
