@@ -13,9 +13,7 @@ from .models import Follow, Like, Post, User
 
 
 def index(request):
-    # data = json.loads(request.body)
     post_filter = 'all'
-    print("Filter", post_filter)
 
     if post_filter == 'all':
         posts = Post.objects.all()
@@ -30,9 +28,6 @@ def index(request):
         print(" --- post filter", post_filter)
         posts = Post.objects.filter(user_id__in=post_filter)
     
-    print("All of the posts", posts)
-    
-
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
     posts = posts.order_by("-timestamp").all()
@@ -48,16 +43,9 @@ def index(request):
             "user_like": like_dict['user_like']
         })
 
-    #print("Posts", fullpostlist)
-    p = Paginator(fullpostlist, 4)
-    print("---- Page", p.num_pages)
-    ppg = p.page(1)
-
-    #return JsonResponse(ppg, safe=False)
+    p = Paginator(fullpostlist, 3)
+    ppg = p.page(request.GET.get('page', '1'))
     return render(request, 'network/index.html', { 'ppg': ppg })
-    #return JsonResponse(fullpostlist, safe=False)
-    #return JsonResponse({"message": "Sure, we got here."}, status=201)
-    return render(request, "network/index.html")
 
 
 def login_view(request):
