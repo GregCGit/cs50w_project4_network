@@ -15,16 +15,24 @@ from .models import Follow, Like, Post, User
 def index(request):
     post_filter = request.GET.get('user', 'all')
     following_page = request.GET.get('flw', '0')
-    print("FP", following_page)
+    #print("FP", following_page)
+    ptitle = ""
+
     if post_filter == 'all':
         posts = Post.objects.all()
+        ptitle = "All Posts"
+        print("Title A", ptitle)
     else:
         if following_page != '0':
             try:
                 post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
                 print("Inside following", post_filter)
+                ptitle = 'Following'
             except ObjectDoesNotExist:
                 return JsonResponse({"message": "Following no one."}, status=201)
+        else:
+            ptitle = User.objects.get(id=post_filter) #.values_list('username', flat=True)
+            print("Title B", ptitle)
         # Assume that we are passed a user
         posts = Post.objects.filter(user_id__in=post_filter)
     
@@ -48,7 +56,8 @@ def index(request):
     return render(request, 'network/index.html', {
         'flw': following_page,
         'ppg': ppg,
-        'filter': request.GET.get('user', 'all')
+        'filter': request.GET.get('user', 'all'),
+        'ptitle': ptitle
      })
 
 

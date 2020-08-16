@@ -1,7 +1,9 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <h2 id="body-title"></h2>
+    <h2>{{ ptitle }}</h2>
+
+    {% if user.is_authenticated and filter == 'all' %}
     <div id="post-view">
         <h4>New Post</h4>
         <form id="post-form">
@@ -10,7 +12,9 @@
             <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
         </form>
     </div>
+    {% endif %}
 
+    {% if filter != 'all' %}
     <div id="follow-view">
         <div class="follow">Following {{ following }}</div>
         <div class="follow">Followed by {{ followed_by }}</div>
@@ -20,6 +24,7 @@
             </form>
         {% endif %}
     </div>
+    {% endif %}
     <br>
     <div id="list-view">
         {% for pp in ppg %}
