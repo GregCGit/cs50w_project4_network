@@ -24,7 +24,7 @@
     <div id="list-view">
         {% for pp in ppg %}
         <div class='posting'>
-            <div class='owner'>{{ pp.user }}</div>
+            <div class='owner'><a href="{% url 'profile' pp.user_id %}">{{ pp.user }}</a></div>
             <div>{{ pp.entry}}</div>
             <div class='timestamp'>{{ pp.timestamp}}</div>
             <div>Like {{ pp.like}}</div>
