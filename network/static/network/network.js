@@ -1,19 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('#new_post').addEventListener('click', new_post);
-    
+    if (is_authenticated == 'True') {
+        if (filter == 'all') {
+            document.querySelector('#new_post').addEventListener('click', new_post);
+        }
+        
+        if (filter != 'all' && flw != 1 && filter != cur_user_id) {
+            document.querySelector('#change_follow').addEventListener('click', change_follow);
+        }
+        
+        //document.querySelector('#change_like').addEventListener('click', change_like);
+    }
+    /*
     // By default, load the all posts
     relative_path = relative_path.slice(0,-1)
     console.log("R path", relative_path);
     console.log("auth", is_authenticated)
     console.log("fpage", following_page)
-    show_posts(req_user_id);
+    //show_posts(req_user_id);
     if (follow_needed) {
         // TBD - not needed, probably remove
         show_follow(req_user_id)
     }
-    if (is_authenticated == "True") {
-        document.querySelector('#change_follow').addEventListener('click', change_follow);
-    }
+    */
 });
 
 
@@ -40,11 +48,37 @@ function change_follow() {
         credentials: 'same-origin',
         body: JSON.stringify({
             cur_user_id: cur_user_id,
-            req_user_id: req_user_id
+            req_user_id: filter
         })
     })
+    location.reload()
 }
 
+
+function change_like(post_id) {
+    console.log("Inside JS chng_like", cur_user_id, "AND", post_id);
+    fetch('/change_like', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            cur_user_id: cur_user_id,
+            post_id: post_id
+        })
+    });
+    // Update the button state and count
+    
+    if (document.querySelector('#clb' + post_id).value == "Like") {
+       document.querySelector('#clb' + post_id).value = 'Unlike';
+       document.querySelector('#lkc' + post_id).innerHTML++;
+    }
+    else {
+        document.querySelector('#clb' + post_id).value = 'Like';
+        document.querySelector('#lkc' + post_id).innerHTML--;
+    }
+}
+
+
+/*
 function show_posts(post_filter) {
     // As we add views, add functionality here to hide / block
     console.log("Made it to show_posts ", post_filter)
@@ -139,11 +173,13 @@ function show_posts(post_filter) {
         }
     });
 }
-
+*/
+/*
 function show_follow(req_user_id) {
     // TBD - not needed, probably remove
     console.log("Calling show_follow", req_user_id)
 }
+*/
 
 function new_post() {
     console.log("Made it inside of new post JSS");
