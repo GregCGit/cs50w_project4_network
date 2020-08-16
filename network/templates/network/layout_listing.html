@@ -37,7 +37,7 @@
             <ul class="pagination">
                 {% if ppg.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ ppg.previous_page_number }}&user={{ user }}" aria-disabled="true">Previous</a>
+                        <a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ ppg.previous_page_number }}" aria-disabled="true">Previous</a>
                 {% else %}
                     <li class="page-item disabled">
                         <a class="page-link" aria-disabled="true">Previous</a>
@@ -47,11 +47,11 @@
                     {% if ppg.number == i %}
                         <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}&user={{ user }}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ i }}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if ppg.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ ppg.next_page_number }}&user={{ user }}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ ppg.next_page_number }}">Next</a></li>
                 {% else %}
                     <li class="page-item disabled"><span class="page-link">Next</span></li>
                 {% endif %}

@@ -14,18 +14,18 @@ from .models import Follow, Like, Post, User
 
 def index(request):
     post_filter = request.GET.get('user', 'all')
-    print(" User ID ", post_filter)
+    following_page = request.GET.get('flw', '0')
+    print("FP", following_page)
     if post_filter == 'all':
         posts = Post.objects.all()
     else:
-        if False:
+        if following_page != '0':
             try:
                 post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
                 print("Inside following", post_filter)
             except ObjectDoesNotExist:
                 return JsonResponse({"message": "Following no one."}, status=201)
         # Assume that we are passed a user
-        print(" --- post filter", post_filter)
         posts = Post.objects.filter(user_id__in=post_filter)
     
     # Figure out likes - first, count up the number of likes per post
@@ -45,10 +45,10 @@ def index(request):
 
     p = Paginator(fullpostlist, 3)
     ppg = p.page(request.GET.get('page', '1'))
-    return render(request, 'network/index.html', { 
+    return render(request, 'network/index.html', {
+        'flw': following_page,
         'ppg': ppg,
-        'user': request.GET.get('user', 'all')
-
+        'filter': request.GET.get('user', 'all')
      })
 
 
