@@ -37,10 +37,12 @@ function change_like(post_id) {
 
     if (document.querySelector('#clb' + post_id).value == "Like") {
        document.querySelector('#clb' + post_id).value = 'Unlike';
+       document.querySelector('#hlb' + post_id).classList = 'fa fa-heart red';
        document.querySelector('#lkc' + post_id).innerHTML++;
     }
     else {
         document.querySelector('#clb' + post_id).value = 'Like';
+        document.querySelector('#hlb' + post_id).classList = 'fa fa-heart-o';
         document.querySelector('#lkc' + post_id).innerHTML--;
     }
 }

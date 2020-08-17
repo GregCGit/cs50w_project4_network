@@ -58,7 +58,7 @@ def index(request):
             "user_like": like_dict['user_like']
         })
 
-    p = Paginator(fullpostlist, 3)
+    p = Paginator(fullpostlist, 10)
     ppg = p.page(request.GET.get('page', '1'))
 
     filter_value = request.GET.get('user', 'all')
