@@ -23,7 +23,6 @@ def index(request):
     if post_filter == 'all':
         posts = Post.objects.all()
         ptitle = 'All Posts'
-        print("Title A", ptitle)
     else:
         if following_page != '0':
             try:
@@ -35,7 +34,6 @@ def index(request):
         else:
             # For the profile page, get follow, followed_by, and me_follow
             ptitle = User.objects.get(id=post_filter)
-            print("Title B", ptitle)
             following = Follow.objects.filter(user_id=post_filter).count()
             followed_by = Follow.objects.filter(following=post_filter).count()
             if Follow.objects.filter(user_id=request.user.id, following=post_filter).count():
@@ -44,7 +42,7 @@ def index(request):
 
         # Assume that we are passed a user
         posts = Post.objects.filter(user_id__in=post_filter)
-    
+
     # Figure out likes - first, count up the number of likes per post
     fullpostlist = []
     posts = posts.order_by("-timestamp").all()
@@ -63,18 +61,18 @@ def index(request):
     p = Paginator(fullpostlist, 3)
     ppg = p.page(request.GET.get('page', '1'))
 
-    filter =  request.GET.get('user', 'all')
-    if filter != 'all':
-        filter = int(filter)
+    filter_value = request.GET.get('user', 'all')
+    if filter_value != 'all':
+        filter_value = int(filter_value)
     return render(request, 'network/index.html', {
         'flw': following_page,
         'ppg': ppg,
-        'filter': filter,
+        'filter': filter_value,
         'ptitle': ptitle,
         "following": following,
         "followed_by": followed_by,
         'am_following': am_following
-     })
+    })
 
 
 def login_view(request):
@@ -206,6 +204,12 @@ def change_like(request):
         like_entry.save()
     return HttpResponse(status=204)
 
+
+@csrf_exempt
+def update_post(request):
+    data = json.loads(request.body)
+    Post.objects.filter(pk=data['id']).update(entry=data['entry'])
+    return HttpResponse(status=204)
 
 """
 @csrf_exempt

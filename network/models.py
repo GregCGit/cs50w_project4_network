@@ -16,7 +16,7 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.user}: {self.entry} on {self.timestamp}"
-    
+
     def serialize(self):
         return {
             "id": self.id,

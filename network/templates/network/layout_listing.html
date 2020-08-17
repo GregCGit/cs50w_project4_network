@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% block title %}{{ ptitle }}{% endblock %}
 
 {% block body %}
     <h2>{{ ptitle }}</h2>
@@ -30,13 +31,18 @@
         {% for pp in ppg %}
         <div class='posting'>
             <div class='owner'><a href="?user={{ pp.user_id }}">{{ pp.user }}</a></div>
-            <div>{{ pp.entry }}</div>
+            <div id='entry{{ pp.id }}'>{{ pp.entry }}</div>
             <div class='timestamp'>{{ pp.timestamp }}</div>
             <div>Like <span id="lkc{{ pp.id }}">{{ pp.like }}</span></div>
             {% if user.is_authenticated %}
                 <form id="like-form">
                     <input type="button" class="btn btn-outline-primary" id="clb{{ pp.id }}" onclick="javascript:change_like('{{ pp.id }}');" value="{{ pp.user_like }}"/>
                 </form>
+            {% endif %}
+            {% if user.id == pp.user_id %}
+            <form id="epform{{ pp.id }}">
+                <input type="button" class="btn btn-outline-primary" id="epb{{ pp.id }}" onclick="javascript:edit_post('{{ pp.id }}');" value="Edit"/>
+            </form>
             {% endif %}
         </div>
         {% empty %}

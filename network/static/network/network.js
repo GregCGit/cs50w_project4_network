@@ -3,46 +3,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filter == 'all') {
             document.querySelector('#new_post').addEventListener('click', new_post);
         }
-        
+
         if (filter != 'all' && flw != 1 && filter != cur_user_id) {
             document.querySelector('#change_follow').addEventListener('click', change_follow);
         }
-        
-        //document.querySelector('#change_like').addEventListener('click', change_like);
     }
-    /*
-    // By default, load the all posts
-    relative_path = relative_path.slice(0,-1)
-    console.log("R path", relative_path);
-    console.log("auth", is_authenticated)
-    console.log("fpage", following_page)
-    //show_posts(req_user_id);
-    if (follow_needed) {
-        // TBD - not needed, probably remove
-        show_follow(req_user_id)
-    }
-    */
 });
 
 
 function change_follow() {
-    /* No need to update as the page is reloaded on click
-    am_following = document.querySelector('#change_follow').value
-    console.log("Inside JS change_follow", am_following, "EOL");
-    if (am_following == "Follow") {
-        am_following = "Unfollow";
-        console.log("  Upper", am_following);
-    }
-    else {
-        am_following = "Follow";
-        console.log("  Lower", am_following);
-
-    }
-    var temp = document.querySelector('#change_follow')
-    temp.setAttribute("value", am_following);
-    console.log("  Yup", temp.value)
-    */
-
     fetch('/change_follow', {
         method: 'POST',
         credentials: 'same-origin',
@@ -53,7 +22,6 @@ function change_follow() {
     })
     location.reload()
 }
-
 
 function change_like(post_id) {
     console.log("Inside JS chng_like", cur_user_id, "AND", post_id);
@@ -66,7 +34,7 @@ function change_like(post_id) {
         })
     });
     // Update the button state and count
-    
+
     if (document.querySelector('#clb' + post_id).value == "Like") {
        document.querySelector('#clb' + post_id).value = 'Unlike';
        document.querySelector('#lkc' + post_id).innerHTML++;
@@ -77,109 +45,6 @@ function change_like(post_id) {
     }
 }
 
-
-/*
-function show_posts(post_filter) {
-    // As we add views, add functionality here to hide / block
-    console.log("Made it to show_posts ", post_filter)
-    document.querySelector('#follow-view').style.display = 'none';
-    document.querySelector('#post-view').style.display = 'none';
-
-    if (post_filter == 'all') {
-        document.querySelector('#body-title').innerHTML = 'All Posts';
-        if (is_authenticated == "True") {
-            document.querySelector('#post-view').style.display = 'block';
-            document.querySelector('#new_entry').value = '';
-        }
-    }
-    else if (following_page) {
-        document.querySelector('#body-title').innerHTML = 'Following';
-    }
-    else {
-        // Profile page
-        document.querySelector('#follow-view').style.display = 'block';
-        document.querySelector('#body-title').innerText = 'Profile ' + req_username;
-    }
-
-
-    // Get the list of posts
-    console.log("Filter", post_filter)
-    
-    fetch('/get_posts', {
-        method: 'PUT',
-        body: JSON.stringify({
-            post_filter: post_filter,
-            following_page: following_page
-        })
-    })
-    .then(response => response.json())
-    .then(posts => {
-        // Print posts
-        console.log(posts);
-        if (posts.error) {
-            alert(posts.error)
-        }
-        else {
-            if (post_filter == "all") {
-                list_h3 = "All"
-            }
-            else {
-                list_h3 = "";
-            }
-            //document.querySelector('#list-view').innerHTML = `<h3>${list_h3}</h3>`;
-            let postlist = document.querySelector('#list-view');
-            posts.forEach(build_list);
-
-            function build_list(post) {
-                //console.log("Build List", post);
-                // Build each row - post
-                let display_posts = document.createElement('div');
-                display_posts.classList.add("posting");
-          
-                // Next build the elements
-                let post_owner = document.createElement('a');
-                post_owner.appendChild(document.createTextNode(post.user));
-                post_owner.classList.add('owner');
-                //post_owner.href = "profile/" + post.user_id
-                post_owner.href = relative_path + post.user_id
-                
-          
-                let post_entry = document.createElement('div');
-                post_entry.appendChild(document.createTextNode(post.entry));
-                post_entry.classList.add('entry');
-          
-                let post_like = document.createElement('div');
-                post_like.appendChild(document.createTextNode("Likes " + post.like));
-                post_like.classList.add('like');
-
-                let post_ulike = document.createElement('div');
-                // TBD the like / unlike button should go here
-                if (post.user_like) {
-                    post_ulike.appendChild(document.createTextNode("I like "));
-                    post_ulike.classList.add('ulike');
-                }
-
-                let post_timestamp = document.createElement('div');
-                post_timestamp.appendChild(document.createTextNode(post.timestamp));
-                post_timestamp.classList.add('timestamp');
-                    
-                display_posts.appendChild(post_owner);
-                display_posts.appendChild(post_entry);
-                display_posts.appendChild(post_like);
-                display_posts.appendChild(post_ulike);
-                display_posts.appendChild(post_timestamp);
-                postlist.appendChild(display_posts);
-              }
-        }
-    });
-}
-*/
-/*
-function show_follow(req_user_id) {
-    // TBD - not needed, probably remove
-    console.log("Calling show_follow", req_user_id)
-}
-*/
 
 function new_post() {
     console.log("Made it inside of new post JSS");
@@ -200,5 +65,53 @@ function new_post() {
         }
         //show_posts('all');
     });
-    
-  }
+
+}
+
+function edit_post(post_id) {
+    console.log("Made it inside of edit post JSS", post_id);
+    let epost = document.querySelector('#entry' + post_id);
+    let original_post = epost.innerHTML;
+
+    // Change the text to textarea
+    let new_post = document.createElement('div');
+    let new_form = document.createElement('form');
+    let new_text_area = document.createElement('textarea');
+    new_text_area.classList.add('form-control');
+    new_text_area.id = 'epta' + post_id;
+    new_text_area.innerHTML = original_post;
+    new_form.appendChild(new_text_area)
+    new_post.appendChild(new_form);
+    epost.innerHTML = new_post.innerHTML;
+
+    // Change edit to save
+    let epb = document.querySelector('#epb' + post_id);
+    epb.className = 'btn btn-primary';
+    epb.setAttribute('onclick',"javascript:save_edited_post('" + post_id + "')");
+    epb.value = 'Save';
+
+}
+
+function save_edited_post(post_id) {
+    console.log("Made it inside of save edited post JSS", post_id);
+    let updated_entry = document.querySelector('#epta' + post_id).value
+    console.log('UP', updated_entry)
+
+    fetch('/update_post', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            id: post_id,
+            entry: updated_entry
+        })
+    })
+
+    // Change text are back to text using updated_entry
+    document.querySelector('#entry' + post_id).innerHTML = updated_entry;
+
+    // Change edit to save
+    let epb = document.querySelector('#epb' + post_id);
+    epb.className = 'btn btn-outline-primary';
+    epb.setAttribute('onclick',"javascript:edit_post('" + post_id + "')");
+    epb.value = 'Edit';
+}
