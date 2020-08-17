@@ -1,16 +1,96 @@
-{% extends "network/layout_listing.html" %}
+{% extends "network/layout.html" %}
 {% load static %}
+
+{% block title %}{{ ptitle }}{% endblock %}
+
+{% block body %}
+    <h2>{{ ptitle }}</h2>
+
+    {% if user.is_authenticated and filter == 'all' %}
+    <div id="post-view">
+        <h4>New Post</h4>
+        <form id="post-form">
+            {% csrf_token %}
+            <textarea class="form-control" id="new_entry" placeholder="Your thoughts..." required></textarea>
+            <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if filter != 'all' and flw != '1' %}
+    <div id="follow-view">
+        <div class="follow">Following {{ following }}</div>
+        <div class="follow">Followed by {{ followed_by }}</div>
+        {% if user.is_authenticated and user.id != filter %}
+            <form id="follow-form">
+                <input type="button" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
+            </form>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div id="list-view">
+        {% for pp in ppg %}
+        <div class='posting'>
+            <div class='owner'><a href="?user={{ pp.user_id }}">{{ pp.user }}</a></div>
+            <div id='entry{{ pp.id }}'>{{ pp.entry }}</div>
+            <div class='timestamp'>{{ pp.timestamp }}</div>
+            {% if user.is_authenticated %}
+                <form>
+                    <button type="button" id="clb{{ pp.id }}" class="hbtn" onclick="javascript:change_like('{{ pp.id }}');" value="{{ pp.user_like }}">
+            {% endif %}
+            {% if pp.user_like == "Unlike" or pp.like > 0 and not user.is_authenticated %}
+                <span class="fa fa-heart red" id="hlb{{ pp.id }}" aria-hidden="true"></span>
+            {% else %}
+                <span class="fa fa-heart-o" id="hlb{{ pp.id }}" aria-hidden="true"></span>
+            {% endif %}
+                <span id="lkc{{ pp.id }}">{{ pp.like }}</span>
+            {% if user.is_authenticated %}
+                    </button>
+                </form>
+            {% endif %}
+            {% if user.id == pp.user_id %}
+                <form id="epform{{ pp.id }}">
+                    <input type="button" class="btn btn-outline-primary" id="epb{{ pp.id }}" onclick="javascript:edit_post('{{ pp.id }}');" value="Edit"/>
+                </form>
+            {% endif %}
+        </div>
+        {% empty %}
+            <h4>No posts found.</h4>
+        {% endfor %}
+        <br>
+        <!-- Fancy Next / Previous buttons -->
+        {% if ppg.has_other_pages %}
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if ppg.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ ppg.previous_page_number }}" aria-disabled="true">Previous</a>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-disabled="true">Previous</a>
+                {% endif %}
+                </li>
+                {% for i in ppg.paginator.page_range %}
+                    {% if ppg.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if ppg.has_next %}
+                    <li class="page-item"><a class="page-link" href="?user={{ filter }}&flw={{ flw }}&page={{ ppg.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+    </div>
+{% endblock %}
 
 {% block script %}
     <script type="text/javascript">
-        /*
-        var req_user_id = "all";
-        var cur_user_id = "{{ user.id }}";
-        var req_username = 0;
-        var follow_needed = 0;
-        var am_following = "";
-        var following_page = 0;
-        */
         var cur_user_id = "{{ user.id }}";
         var is_authenticated = "{{ user.is_authenticated }}";
         var filter = "{{ filter }}";

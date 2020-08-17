@@ -7,12 +7,6 @@ body {
     padding: 2px;
 }
 
-/* Stub if we decide to add CSS
-.entry {
-
-}
-*/
-
 .owner {
     font-weight: bold;
 }
@@ -26,14 +20,6 @@ body {
     font-weight: 500;
 }
 
-#display-user {
-    font-weight: bold;
-}
-
-#list-view {
-    margin-top: 5px;
-}
-
 .red {
     color: red;
 }
@@ -41,4 +27,8 @@ body {
 .hbtn {
     background-color: transparent;
     border: none;
+}
+
+#list-view {
+    margin-top: 5px;
 }

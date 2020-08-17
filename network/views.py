@@ -158,7 +158,6 @@ def count_likes(post_id, user_id):
     try:
         # First, lets get the count
         like_dict['num_like'] = Like.objects.filter(post_id=post_id).count()
-        #print("Likes", post_id, like_dict['num_like'])
         # And then check to see if the user liked it
         try:
             Like.objects.get(post_id=post_id, user_id=user_id)
@@ -187,20 +186,15 @@ def change_follow(request):
 
 @csrf_exempt
 def change_like(request):
-    #print("PY Change Like inside")
     data = json.loads(request.body)
     try:
-        #print("PY Change Like inside try")
         like_entry = Like.objects.get(user_id=data['cur_user_id'], post_id=data['post_id'])
-        #print("PY Change Like inside try 2")
         like_entry.delete()
     except ObjectDoesNotExist:
-        #print("PY Change Like inside except")
         like_entry = Like(
             user_id=data['cur_user_id'],
             post_id=data['post_id']
         )
-        #print("PY Change Like save")
         like_entry.save()
     return HttpResponse(status=204)
 
@@ -210,96 +204,3 @@ def update_post(request):
     data = json.loads(request.body)
     Post.objects.filter(pk=data['id']).update(entry=data['entry'])
     return HttpResponse(status=204)
-
-"""
-@csrf_exempt
-def get_posts(request):
-    ### We can probably retire this after the pagination rewrite
-    data = json.loads(request.body)
-    post_filter = data['post_filter']
-    print("Filter", post_filter)
-
-    if post_filter == 'all':
-        posts = Post.objects.all()
-    else:
-        if data['following_page']:
-            try:
-                post_filter = Follow.objects.filter(user_id=post_filter).values_list('following', flat=True)
-                print("Inside following", post_filter)
-            except ObjectDoesNotExist:
-                return JsonResponse({"message": "Following no one."}, status=201)
-        # Assume that we are passed a user
-        print(" --- post filter", post_filter)
-        posts = Post.objects.filter(user_id__in=post_filter)
-    
-    #print("All of the posts", posts)
-    #return JsonResponse({"message": "Sure, we got here."}, status=201)
-
-    # Figure out likes - first, count up the number of likes per post
-    fullpostlist = []
-    posts = posts.order_by("-timestamp").all()
-    for post in posts:
-        like_dict = count_likes(post.id, request.user.id)
-        fullpostlist.append({
-            "id": post.id,
-            "user": post.user.username,
-            "user_id": post.user_id,
-            "entry": post.entry,
-            "timestamp": post.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
-            "like":  like_dict['num_like'],
-            "user_like": like_dict['user_like']
-        })
-
-    #print("Posts", fullpostlist)
-    p = Paginator(fullpostlist, 4)
-    print("---- Page", p.num_pages)
-    ppg = p.page(2)
-    return JsonResponse(ppg, safe=False)
-    #return render(request, 'network/index.html', { 'fullpostlist': ppg })
-    #return JsonResponse(fullpostlist, safe=False)
-    #return JsonResponse({"message": "Sure, we got here."}, status=201)
-"""
-"""
-def profile(request, user_id):
-    print("Inside of JS profile", user_id)
-    am_following = "Follow"
-    if Follow.objects.filter(user_id=request.user.id, following=user_id).count():
-        am_following = "Unfollow"
-    return render(request, "network/profile.html", {
-        "req_user_id": user_id,
-        "req_username": User.objects.get(id=user_id).username,
-        "following": Follow.objects.filter(user_id=user_id).count(),
-        "followed_by": Follow.objects.filter(following=user_id).count(),
-        "am_following": am_following
-    })
-"""
-"""
-def following(request, user_id):
-    ### We can probably retire this after the pagination rewrite
-    return render(request, "network/following.html", {
-        "req_user_id": user_id,
-        "req_username": User.objects.get(id=user_id).username,
-        "following": 0,
-        "followed_by": 0,
-        "am_following": False,
-        "following_page": 1,
-    })
-"""
-"""
-def following(request, user_id):
-    ### We can probably retire this after the pagination rewrite
-    # First, find out who we are following
-    try:
-        follow_users = Follow.objects.filter(user_id=user_id).values_list('following', flat=True)
-        print("Inside following", follow_users)
-    except ObjectDoesNotExist:
-        return JsonResponse({"message": "Following no one."}, status=201)
-
-    # Next, find all of the posts for those people
-    follow_list = Post.objects.filter(user_id__in=follow_users).order_by("-timestamp")
-
-    print("- Whatever", follow_list)
-
-    # Figure out where to return it to
-    return JsonResponse({"message": "Sure, we got here."}, status=201)
-"""
