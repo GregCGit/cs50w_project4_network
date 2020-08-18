@@ -9,10 +9,12 @@
     {% if user.is_authenticated and filter == 'all' %}
     <div id="post-view">
         <h4>New Post</h4>
-        <form id="post-form">
+        <form method="post" action="{% url 'new_post' %}">
             {% csrf_token %}
-            <textarea class="form-control" id="new_entry" placeholder="Your thoughts..." required></textarea>
-            <input type="submit" class="btn btn-primary" id="new_post" value="Post"/>
+            <div class="form-group">
+                <textarea class="form-control" name="new_entry" placeholder="Your thoughts..." required></textarea>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Post"/>
         </form>
     </div>
     {% endif %}

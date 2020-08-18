@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     if (is_authenticated == 'True') {
-        if (filter == 'all') {
-            document.querySelector('#new_post').addEventListener('click', new_post);
-        }
-
         if (filter != 'all' && flw != 1 && filter != cur_user_id) {
             document.querySelector('#change_follow').addEventListener('click', change_follow);
         }
