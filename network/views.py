@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -127,6 +127,7 @@ def register(request):
         return render(request, "network/register.html")
 
 
+@login_required
 def new_post(request):
     if request.method != "POST":
         return render(request, (reverse("index")), {
@@ -160,7 +161,7 @@ def count_likes(post_id, user_id):
     return like_dict
 
 
-@csrf_exempt
+@login_required
 def change_follow(request):
     data = json.loads(request.body)
     try:
@@ -175,7 +176,6 @@ def change_follow(request):
     return HttpResponse(status=204)
 
 
-@csrf_exempt
 def change_like(request):
     data = json.loads(request.body)
     try:
@@ -190,7 +190,6 @@ def change_like(request):
     return HttpResponse(status=204)
 
 
-@csrf_exempt
 def update_post(request):
     data = json.loads(request.body)
     Post.objects.filter(pk=data['id']).update(entry=data['entry'])

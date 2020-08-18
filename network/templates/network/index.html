@@ -24,7 +24,8 @@
         <div class="follow">Following {{ following }}</div>
         <div class="follow">Followed by {{ followed_by }}</div>
         {% if user.is_authenticated and user.id != filter %}
-            <form id="follow-form">
+            <form id="follow-form" method="post">
+                {% csrf_token %}
                 <input type="button" class="btn btn-primary" id="change_follow" value="{{ am_following }}"/>
             </form>
         {% endif %}
@@ -39,6 +40,7 @@
             <div class='timestamp'>{{ pp.timestamp }}</div>
             {% if user.is_authenticated %}
                 <form>
+                    {% csrf_token %}
                     <button type="button" id="clb{{ pp.id }}" class="hbtn" onclick="javascript:change_like('{{ pp.id }}');" value="{{ pp.user_like }}">
             {% endif %}
             {% if pp.user_like == "Unlike" or pp.like > 0 and not user.is_authenticated %}

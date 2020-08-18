@@ -10,7 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function change_follow() {
     fetch('/change_follow', {
         method: 'POST',
-        credentials: 'same-origin',
+        credentials: 'include',
+        referrerPolicy: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.forms[0].querySelector('input[name="csrfmiddlewaretoken"]').value
+        },
         body: JSON.stringify({
             cur_user_id: cur_user_id,
             req_user_id: filter
@@ -25,6 +31,11 @@ function change_like(post_id) {
     fetch('/change_like', {
         method: 'POST',
         credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.forms[0].querySelector('input[name="csrfmiddlewaretoken"]').value
+        },
         body: JSON.stringify({
             cur_user_id: cur_user_id,
             post_id: post_id
@@ -77,6 +88,11 @@ function save_edited_post(post_id) {
     fetch('/update_post', {
         method: 'POST',
         credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.forms[0].querySelector('input[name="csrfmiddlewaretoken"]').value
+        },
         body: JSON.stringify({
             id: post_id,
             entry: updated_entry
