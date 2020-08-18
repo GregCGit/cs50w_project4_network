@@ -128,24 +128,10 @@ def register(request):
 
 
 def new_post(request):
-    print("NP:", request.user.id)
-    print("RE:", request.content_params)
-    for key, value in request.POST.items():
-        print(f'Key: {key}')
-        print(f'Value: {value}')
-    # Composing a new post must be via POST
     if request.method != "POST":
-        # TBD update error condition
-        return JsonResponse({"error": "POST request required."}, status=400)
-
-    #  Add data checking here
-    #data = json.loads(request.body)
-    #user = User.objects.get(id=request.user.id)
-    #entry = data.get("entry", "")
-
-    if not request.POST["new_entry"]:
-        # TBD needs to be changed for error condition
-        return JsonResponse({"error": "Post cannot be empty."}, status=400)
+        return render(request, (reverse("index")), {
+                "message": "Invalid username and/or password."
+        })
 
     post = Post(
         user=User.objects.get(id=request.user.id),
@@ -153,7 +139,6 @@ def new_post(request):
     )
     post.save()
     return HttpResponseRedirect(reverse("index"))
-    # return JsonResponse({"message": "Post logged successfully."}, status=201)
 
 
 def count_likes(post_id, user_id):

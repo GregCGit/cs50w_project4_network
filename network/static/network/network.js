@@ -19,30 +19,6 @@ function change_follow() {
     location.reload()
 }
 
-function change_like(post_id) {
-    console.log("Inside JS chng_like", cur_user_id, "AND", post_id);
-    fetch('/change_like', {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: JSON.stringify({
-            cur_user_id: cur_user_id,
-            post_id: post_id
-        })
-    });
-    // Update the button state and count
-
-    if (document.querySelector('#clb' + post_id).value == "Like") {
-       document.querySelector('#clb' + post_id).value = 'Unlike';
-       document.querySelector('#hlb' + post_id).classList = 'fa fa-heart red';
-       document.querySelector('#lkc' + post_id).innerHTML++;
-    }
-    else {
-        document.querySelector('#clb' + post_id).value = 'Like';
-        document.querySelector('#hlb' + post_id).classList = 'fa fa-heart-o';
-        document.querySelector('#lkc' + post_id).innerHTML--;
-    }
-}
-
 
 function new_post() {
     console.log("Made it inside of new post JSS");
